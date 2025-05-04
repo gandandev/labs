@@ -2,7 +2,7 @@
   import { Trash } from '@lucide/svelte'
 </script>
 
-<div
+<button
   class="group relative flex cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-100 px-4 py-2 duration-200 select-none active:scale-95"
 >
   <div
@@ -14,4 +14,4 @@
   </div>
   <Trash class="size-5" />
   Hold to Delete
-</div>
+</button>
