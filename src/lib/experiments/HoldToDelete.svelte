@@ -1,12 +1,15 @@
 <script lang="ts">
-  import { Trash } from '@lucide/svelte'
+  import { Trash, CircleCheck } from '@lucide/svelte'
+  import { fly } from 'svelte/transition'
 
   let isHolding = $state(false)
   let isReadyToDelete = $state(false)
   let holdTimeout: number | undefined = $state(undefined)
+  let showDone = $state(false)
 
   function handlePointerDown() {
     isHolding = true
+    showDone = false
     holdTimeout = setTimeout(() => {
       isReadyToDelete = true
     }, 1000)
@@ -14,6 +17,12 @@
 
   function handlePointerUp() {
     clearTimeout(holdTimeout)
+    if (isReadyToDelete) {
+      showDone = true
+      setTimeout(() => {
+        showDone = false
+      }, 2000)
+    }
     isHolding = false
     isReadyToDelete = false
   }
@@ -26,23 +35,58 @@
 </script>
 
 <button
-  class="group relative flex w-42 cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-100 py-2 duration-200 select-none active:scale-95"
+  class="group relative h-10 w-42 cursor-pointer overflow-hidden rounded-full bg-neutral-100 duration-200 select-none active:scale-95 disabled:cursor-not-allowed disabled:active:scale-100"
   class:ring-2={isReadyToDelete}
   class:ring-red-500={isReadyToDelete}
+  disabled={showDone}
   onpointerdown={handlePointerDown}
   onpointerup={handlePointerUp}
   onpointerleave={handlePointerLeave}
 >
   <div
     aria-hidden="true"
-    class="absolute flex size-5 h-full w-full items-center justify-center gap-2 rounded-full bg-red-100 text-red-500 duration-200 [clip-path:inset(0_100%_0_0)]"
+    class="pointer-events-none absolute inset-0 z-10 size-5 h-full w-full rounded-full bg-red-100 text-red-500 duration-200 [clip-path:inset(0_100%_0_0)]"
     class:duration-1000={isHolding}
     class:ease-linear={isHolding}
     class:![clip-path:inset(0_0_0_0)]={isHolding}
   >
-    <Trash class="size-5" />
-    Hold to Delete
+    {#if showDone}
+      <div
+        class="absolute inset-0 flex h-full w-full items-center justify-center gap-2"
+        in:fly={{ y: 40 }}
+        out:fly={{ y: -40 }}
+      >
+        <CircleCheck class="size-5" />
+        Deleted
+      </div>
+    {:else}
+      <div
+        class="absolute inset-0 flex h-full w-full items-center justify-center gap-2"
+        in:fly={{ y: 40 }}
+        out:fly={{ y: -40 }}
+      >
+        <Trash class="size-5" />
+        Hold to Delete
+      </div>
+    {/if}
   </div>
-  <Trash class="size-5" />
-  Hold to Delete
+  {#if showDone}
+    <div
+      class="absolute inset-0 flex h-full w-full items-center justify-center gap-2"
+      in:fly={{ y: 40 }}
+      out:fly={{ y: -40 }}
+    >
+      <CircleCheck class="size-5" />
+      Deleted
+    </div>
+  {:else}
+    <div
+      class="absolute inset-0 flex h-full w-full items-center justify-center gap-2"
+      in:fly={{ y: 40 }}
+      out:fly={{ y: -40 }}
+    >
+      <Trash class="size-5" />
+      Hold to Delete
+    </div>
+  {/if}
 </button>
