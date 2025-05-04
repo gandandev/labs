@@ -6,7 +6,7 @@
   <div class="relative col-span-2 flex h-96 flex-col items-center justify-center p-5 text-center">
     <span class="rounded-full border px-3 py-1 font-medium">Labs</span>
     <p class="mt-2 text-4xl font-medium tracking-tight text-balance">
-      Interactions, components, and cool stuff
+      Crafting delightful UI experiences
     </p>
     <div class="mt-4 flex gap-5 text-sm">
       <a
