@@ -1,9 +1,9 @@
-import type { SvelteComponent } from 'svelte'
+import type { Component } from 'svelte'
 import HoldToDelete from './experiments/HoldToDelete.svelte'
 
 type Experiment = {
   id: string
-  component: typeof SvelteComponent
+  component: Component
   credits?: {
     name: string
     url: string
