@@ -14,9 +14,7 @@
 
   function handlePointerUp() {
     clearTimeout(holdTimeout)
-    if (!isReadyToDelete) {
-      isHolding = false
-    }
+    isHolding = false
     isReadyToDelete = false
   }
 
