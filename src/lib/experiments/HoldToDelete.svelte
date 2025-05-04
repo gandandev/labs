@@ -3,7 +3,7 @@
 </script>
 
 <button
-  class="group relative flex cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-100 px-4 py-2 duration-200 select-none active:scale-95"
+  class="group relative flex cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-100 px-4 py-2 duration-100 select-none active:scale-95"
 >
   <div
     aria-hidden="true"
