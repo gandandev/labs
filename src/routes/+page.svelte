@@ -24,8 +24,18 @@
     </div>
   </div>
   {#each catalog as experiment}
-    <div class="flex h-96 items-center justify-center rounded-2xl bg-white">
+    <div class="relative flex h-96 items-center justify-center rounded-2xl bg-white">
       <experiment.component />
+      {#if experiment.credits}
+        <a
+          href={experiment.credits.url}
+          class="absolute right-2 bottom-2 rounded-full px-2 py-1 text-xs text-neutral-500 duration-150 hover:text-black hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Original by {experiment.credits.name}
+        </a>
+      {/if}
     </div>
   {/each}
 </div>
