@@ -1,9 +1,39 @@
-<script>
+<script lang="ts">
   import { Trash } from '@lucide/svelte'
+
+  let isHolding = $state(false)
+  let isReadyToDelete = $state(false)
+  let holdTimeout: number | undefined = $state(undefined)
+
+  function handlePointerDown() {
+    isHolding = true
+    holdTimeout = setTimeout(() => {
+      isReadyToDelete = true
+    }, 1000)
+  }
+
+  function handlePointerUp() {
+    clearTimeout(holdTimeout)
+    if (!isReadyToDelete) {
+      isHolding = false
+    }
+    isReadyToDelete = false
+  }
+
+  function handlePointerLeave() {
+    clearTimeout(holdTimeout)
+    isHolding = false
+    isReadyToDelete = false
+  }
 </script>
 
 <button
-  class="group relative flex cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-100 px-4 py-2 transition-[scale,box-shadow] duration-[100ms,200ms] select-none active:scale-95 active:ring-2 active:ring-red-500 active:delay-[0ms,950ms]"
+  class="group relative flex w-42 cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-100 py-2 duration-200 select-none active:scale-95"
+  class:ring-2={isReadyToDelete}
+  class:ring-red-500={isReadyToDelete}
+  onpointerdown={handlePointerDown}
+  onpointerup={handlePointerUp}
+  onpointerleave={handlePointerLeave}
 >
   <div
     aria-hidden="true"
