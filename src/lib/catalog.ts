@@ -1,5 +1,5 @@
 import type { SvelteComponent } from 'svelte'
-import TestButton from './experiments/TestButton.svelte'
+import HoldToDelete from './experiments/HoldToDelete.svelte'
 
 type Experiment = {
   id: string
@@ -11,11 +11,11 @@ type Experiment = {
 }
 export default [
   {
-    id: 'test-button',
-    component: TestButton,
+    id: 'hold-to-delete',
+    component: HoldToDelete,
     credits: {
-      name: 'John Doe',
-      url: 'https://example.com'
+      name: 'Emil Kowalski',
+      url: 'https://emilkowal.ski/ui/building-a-hold-to-delete-component'
     }
   }
 ] as Experiment[]

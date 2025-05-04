@@ -1,0 +1,17 @@
+<script>
+  import { Trash } from '@lucide/svelte'
+</script>
+
+<div
+  class="group relative flex cursor-pointer items-center justify-center gap-2 rounded-full bg-neutral-100 px-4 py-2 duration-200 select-none active:scale-95"
+>
+  <div
+    aria-hidden="true"
+    class="absolute flex size-5 h-full w-full items-center justify-center gap-2 rounded-full bg-red-100 text-red-500 duration-200 [clip-path:inset(0_100%_0_0)] group-active:duration-1000 group-active:ease-linear group-active:[clip-path:inset(0_0_0_0)]"
+  >
+    <Trash class="size-5" />
+    Hold to Delete
+  </div>
+  <Trash class="size-5" />
+  Hold to Delete
+</div>
