@@ -12,12 +12,16 @@
       <a
         href="https://github.com/gandandev"
         class="rounded-full font-medium duration-150 hover:underline"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         @gandandev
       </a>
       <a
         href="https://github.com/gandandev/labs"
         class="rounded-full font-medium duration-150 hover:underline"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         View on GitHub
       </a>
