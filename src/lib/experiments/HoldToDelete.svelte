@@ -45,7 +45,7 @@
 >
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-0 z-10 size-5 h-full w-full rounded-full bg-red-100 text-red-500 duration-200 [clip-path:inset(0_100%_0_0)]"
+    class="pointer-events-none absolute inset-0 z-10 h-full w-full rounded-full bg-red-100 text-red-500 duration-200 [clip-path:inset(0_100%_0_0)]"
     class:duration-1000={isHolding}
     class:ease-linear={isHolding}
     class:![clip-path:inset(0_0_0_0)]={isHolding}
