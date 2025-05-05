@@ -1,5 +1,6 @@
 import type { Component } from 'svelte'
 import HoldToDelete from './experiments/HoldToDelete.svelte'
+import TextShimmer from './experiments/TextShimmer.svelte'
 
 type Experiment = {
   id: string
@@ -17,5 +18,9 @@ export default [
       name: 'Emil Kowalski',
       url: 'https://emilkowal.ski/ui/building-a-hold-to-delete-component'
     }
+  },
+  {
+    id: 'text-shimmer',
+    component: TextShimmer
   }
 ] as Experiment[]
