@@ -7,7 +7,8 @@
   let holdTimeout: number | undefined = $state(undefined)
   let showDone = $state(false)
 
-  function handlePointerDown() {
+  function handlePointerDown(event: PointerEvent) {
+    if (event.button !== 0) return
     isHolding = true
     showDone = false
     holdTimeout = setTimeout(() => {
@@ -27,7 +28,7 @@
     isReadyToDelete = false
   }
 
-  function handlePointerLeave() {
+  function resetHoldState() {
     clearTimeout(holdTimeout)
     isHolding = false
     isReadyToDelete = false
@@ -41,7 +42,11 @@
   disabled={showDone}
   onpointerdown={handlePointerDown}
   onpointerup={handlePointerUp}
-  onpointerleave={handlePointerLeave}
+  onpointerleave={resetHoldState}
+  onpointercancel={resetHoldState}
+  oncontextmenu={(event) => {
+    if (isHolding) event.preventDefault()
+  }}
 >
   <div
     aria-hidden="true"
