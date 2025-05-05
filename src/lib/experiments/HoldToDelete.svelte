@@ -33,6 +33,12 @@
     isHolding = false
     isReadyToDelete = false
   }
+
+  function handlePointerCancel() {
+    clearTimeout(holdTimeout)
+    isHolding = false
+    isReadyToDelete = false
+  }
 </script>
 
 <button
@@ -43,6 +49,7 @@
   onpointerdown={handlePointerDown}
   onpointerup={handlePointerUp}
   onpointerleave={handlePointerLeave}
+  onpointercancel={handlePointerCancel}
   oncontextmenu={(event) => {
     if (isHolding) event.preventDefault()
   }}
