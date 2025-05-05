@@ -28,13 +28,7 @@
     isReadyToDelete = false
   }
 
-  function handlePointerLeave() {
-    clearTimeout(holdTimeout)
-    isHolding = false
-    isReadyToDelete = false
-  }
-
-  function handlePointerCancel() {
+  function resetHoldState() {
     clearTimeout(holdTimeout)
     isHolding = false
     isReadyToDelete = false
@@ -48,8 +42,8 @@
   disabled={showDone}
   onpointerdown={handlePointerDown}
   onpointerup={handlePointerUp}
-  onpointerleave={handlePointerLeave}
-  onpointercancel={handlePointerCancel}
+  onpointerleave={resetHoldState}
+  onpointercancel={resetHoldState}
   oncontextmenu={(event) => {
     if (isHolding) event.preventDefault()
   }}
