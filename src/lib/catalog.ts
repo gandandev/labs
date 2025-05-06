@@ -12,7 +12,8 @@ type Experiment = {
     url: string
   }
 }
-export default [
+
+const experiments: Experiment[] = [
   {
     id: 'hold-to-delete',
     component: HoldToDelete,
@@ -29,4 +30,12 @@ export default [
     startDate: '2025-05-05',
     endDate: '2025-05-05'
   }
-] as Experiment[]
+]
+
+experiments.sort((a, b) => {
+  const endDateComparison = b.endDate.localeCompare(a.endDate)
+  if (endDateComparison !== 0) return endDateComparison
+  return b.startDate.localeCompare(a.startDate)
+})
+
+export default experiments
