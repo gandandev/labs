@@ -3,3 +3,8 @@
 html {
   @apply bg-neutral-50;
 }
+
+@theme {
+  /* Dynamic Island Screen Recording */
+  --color-dynamic-island-red: #fd483e;
+}
