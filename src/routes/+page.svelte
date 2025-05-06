@@ -3,7 +3,7 @@
   import { formatDateRange } from '$lib/utils'
 </script>
 
-<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 2xl:grid-cols-3">
+<div class="flex grid-cols-1 flex-col gap-4 p-4 md:grid md:grid-cols-2 2xl:grid-cols-3">
   <div class="relative col-span-2 flex h-96 flex-col items-center justify-center p-5 text-center">
     <span class="rounded-full border px-3 py-1 font-medium">Labs</span>
     <p class="mt-2 text-4xl font-medium tracking-tight text-balance">
