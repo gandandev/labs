@@ -1,5 +1,6 @@
 <script lang="ts">
   import catalog from '$lib/catalog'
+  import { formatDateRange } from '$lib/utils'
 </script>
 
 <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 2xl:grid-cols-3">
@@ -30,6 +31,9 @@
   {#each catalog as experiment}
     <div class="relative flex h-96 items-center justify-center rounded-2xl bg-white">
       <experiment.component />
+      <span class="absolute bottom-2 left-2 rounded-full px-2 py-1 text-xs text-neutral-500">
+        {formatDateRange(experiment.startDate, experiment.endDate)}
+      </span>
       {#if experiment.credits}
         <a
           href={experiment.credits.url}
