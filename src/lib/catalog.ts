@@ -5,15 +5,20 @@ import TextShimmer from './experiments/TextShimmer.svelte'
 type Experiment = {
   id: string
   component: Component
+  startDate: string
+  endDate: string
   credits?: {
     name: string
     url: string
   }
 }
-export default [
+
+const experiments: Experiment[] = [
   {
     id: 'hold-to-delete',
     component: HoldToDelete,
+    startDate: '2025-05-04',
+    endDate: '2025-05-05',
     credits: {
       name: 'Emil Kowalski',
       url: 'https://emilkowal.ski/ui/building-a-hold-to-delete-component'
@@ -21,6 +26,16 @@ export default [
   },
   {
     id: 'text-shimmer',
-    component: TextShimmer
+    component: TextShimmer,
+    startDate: '2025-05-05',
+    endDate: '2025-05-05'
   }
-] as Experiment[]
+]
+
+experiments.sort((a, b) => {
+  const endDateComparison = b.endDate.localeCompare(a.endDate)
+  if (endDateComparison !== 0) return endDateComparison
+  return b.startDate.localeCompare(a.startDate)
+})
+
+export default experiments
