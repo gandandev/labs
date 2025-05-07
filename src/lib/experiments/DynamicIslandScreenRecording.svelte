@@ -28,7 +28,7 @@
       setTimeout(() => {
         state = 'recording'
       }, 2000)
-    }, 2000)
+    }, 800)
   }
 
   $effect(() => {
@@ -64,7 +64,9 @@
     disabled={state != 'recording'}
   >
     <svg
-      class="absolute inset-0 h-full w-full"
+      class="absolute inset-0 h-full w-full duration-700"
+      class:scale-50={state === 'saved'}
+      class:blur-sm={state === 'saved'}
       viewBox={`0 0 ${BUTTON_DIAMETER} ${BUTTON_DIAMETER}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -77,11 +79,22 @@
         stroke-width={STROKE_WIDTH}
         stroke-linecap="round"
         stroke-dasharray={`${currentLoaderVisible} ${currentLoaderGap}`}
-        stroke-dashoffset={state === 'saving' ? currentLoaderVisible : 0}
+        stroke-dashoffset={state === 'saving' || state === 'saved' ? currentLoaderVisible : 0}
         class="origin-center"
         class:animate-[spin_1.5s_linear_infinite]={state === 'saving' || state === 'saved'}
       />
     </svg>
-    <div class="bg-dynamic-island-red size-5 rounded"></div>
+    <div
+      class="bg-dynamic-island-red ease-back-out size-5 origin-right overflow-hidden rounded duration-600"
+      class:scale-250={state === 'saved'}
+      class:translate-x-2={state === 'saved'}
+    >
+      <img
+        src="https://picsum.photos/500/500"
+        alt="Screen Recording Preview"
+        class="size-full object-cover duration-500"
+        class:opacity-0={state === 'recording' || state === 'saving'}
+      />
+    </div>
   </button>
 </div>
