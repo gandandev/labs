@@ -22,13 +22,16 @@
   function handleStopRecording() {
     state = 'saving'
 
-    setTimeout(() => {
-      state = 'saved'
+    setTimeout(
+      () => {
+        state = 'saved'
 
-      setTimeout(() => {
-        state = 'recording'
-      }, 2000)
-    }, 800)
+        setTimeout(() => {
+          state = 'recording'
+        }, 2000)
+      },
+      500 + Math.random() * 700
+    )
   }
 
   $effect(() => {
