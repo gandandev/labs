@@ -1,6 +1,7 @@
 import type { Component } from 'svelte'
 import HoldToDelete from './experiments/HoldToDelete.svelte'
 import TextShimmer from './experiments/TextShimmer.svelte'
+import DynamicIslandScreenRecording from './experiments/DynamicIslandScreenRecording.svelte'
 
 type Experiment = {
   id: string
@@ -29,6 +30,16 @@ const experiments: Experiment[] = [
     component: TextShimmer,
     startDate: '2025-05-05',
     endDate: '2025-05-05'
+  },
+  {
+    id: 'dynamic-island-screen-recording',
+    component: DynamicIslandScreenRecording,
+    startDate: '2025-05-06',
+    endDate: '2025-05-06',
+    credits: {
+      name: 'Apple',
+      url: 'https://www.youtube.com/watch?v=m6WMwSj_EbA&t=523s'
+    }
   }
 ]
 
