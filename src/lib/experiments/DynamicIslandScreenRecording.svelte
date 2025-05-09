@@ -95,7 +95,7 @@
       <img
         src="https://picsum.photos/500/500"
         alt="Screen Recording Preview"
-        class="size-full object-cover duration-500"
+        class="pointer-events-none size-full object-cover duration-500"
         class:opacity-0={state === 'recording' || state === 'saving'}
       />
     </div>
