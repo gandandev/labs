@@ -2,7 +2,7 @@
   import { Tween } from 'svelte/motion'
   import { cubicOut } from 'svelte/easing'
 
-  let state: 'recording' | 'saving' | 'saved' | 'replay' = $state('recording')
+  let recordingStatus: 'recording' | 'saving' | 'saved' | 'replay' = $state('recording')
 
   const BUTTON_DIAMETER = 48 // == h-12
   const STROKE_WIDTH = 3 // Stroke width
@@ -20,14 +20,14 @@
   const currentLoaderGap = $derived(loaderPath.current.gap)
 
   function handleStopRecording() {
-    state = 'saving'
+    recordingStatus = 'saving'
 
     setTimeout(
       () => {
-        state = 'saved'
+        recordingStatus = 'saved'
 
         setTimeout(() => {
-          state = 'recording'
+          recordingStatus = 'recording'
         }, 2000)
       },
       500 + Math.random() * 700
@@ -35,7 +35,7 @@
   }
 
   $effect(() => {
-    if (state === 'saving') {
+    if (recordingStatus === 'saving') {
       loaderPath.set(
         {
           visible: C * LOADER_VISIBLE_PERCENT,
@@ -61,15 +61,15 @@
   </div>
   <button
     class="relative flex aspect-square h-12 cursor-pointer items-center justify-center rounded-full duration-500 ease-out active:scale-90 active:opacity-50 disabled:pointer-events-none"
-    class:opacity-75={state === 'saving'}
+    class:opacity-75={recordingStatus === 'saving'}
     aria-label="Stop recording"
     onclick={handleStopRecording}
-    disabled={state != 'recording'}
+    disabled={recordingStatus != 'recording'}
   >
     <svg
       class="absolute inset-0 h-full w-full duration-700"
-      class:scale-50={state === 'saved'}
-      class:blur-sm={state === 'saved'}
+      class:scale-50={recordingStatus === 'saved'}
+      class:blur-sm={recordingStatus === 'saved'}
       viewBox={`0 0 ${BUTTON_DIAMETER} ${BUTTON_DIAMETER}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -82,21 +82,24 @@
         stroke-width={STROKE_WIDTH}
         stroke-linecap="round"
         stroke-dasharray={`${currentLoaderVisible} ${currentLoaderGap}`}
-        stroke-dashoffset={state === 'saving' || state === 'saved' ? currentLoaderVisible : 0}
+        stroke-dashoffset={recordingStatus === 'saving' || recordingStatus === 'saved'
+          ? currentLoaderVisible
+          : 0}
         class="origin-center"
-        class:animate-[spin_1.5s_linear_infinite]={state === 'saving' || state === 'saved'}
+        class:animate-[spin_1.5s_linear_infinite]={recordingStatus === 'saving' ||
+          recordingStatus === 'saved'}
       />
     </svg>
     <div
       class="bg-dynamic-island-red ease-back-out size-5 origin-right overflow-hidden rounded duration-600"
-      class:scale-250={state === 'saved'}
-      class:translate-x-2={state === 'saved'}
+      class:scale-250={recordingStatus === 'saved'}
+      class:translate-x-2={recordingStatus === 'saved'}
     >
       <img
         src="https://picsum.photos/500/500"
         alt="Screen Recording Preview"
         class="pointer-events-none size-full object-cover duration-500"
-        class:opacity-0={state === 'recording' || state === 'saving'}
+        class:opacity-0={recordingStatus === 'recording' || recordingStatus === 'saving'}
       />
     </div>
   </button>
