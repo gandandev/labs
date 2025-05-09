@@ -19,6 +19,8 @@
   const currentLoaderVisible = $derived(loaderPath.current.visible)
   const currentLoaderGap = $derived(loaderPath.current.gap)
 
+  let randomValue = $state(Math.floor(Math.random() * 1000))
+
   function handleStopRecording() {
     recordingStatus = 'saving'
 
@@ -28,6 +30,10 @@
 
         setTimeout(() => {
           recordingStatus = 'recording'
+
+          setTimeout(() => {
+            randomValue = Math.floor(Math.random() * 1000)
+          }, 600)
         }, 2000)
       },
       500 + Math.random() * 700
@@ -96,7 +102,7 @@
       class:translate-x-2={recordingStatus === 'saved'}
     >
       <img
-        src="https://picsum.photos/500/500"
+        src={`https://picsum.photos/500/500?random=${randomValue}`}
         alt="Screen Recording Preview"
         class="pointer-events-none size-full object-cover duration-500"
         class:opacity-0={recordingStatus === 'recording' || recordingStatus === 'saving'}
