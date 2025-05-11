@@ -35,7 +35,7 @@ const experiments: Experiment[] = [
     id: 'dynamic-island-screen-recording',
     component: DynamicIslandScreenRecording,
     startDate: '2025-05-06',
-    endDate: '2025-05-06',
+    endDate: '2025-05-11',
     credits: {
       name: 'Apple',
       url: 'https://www.youtube.com/watch?v=m6WMwSj_EbA&t=523s'
