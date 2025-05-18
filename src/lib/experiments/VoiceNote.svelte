@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Mic, X, Check, Play, Square, Send } from '@lucide/svelte'
   import { scale } from 'svelte/transition'
+  import { cubicIn, cubicOut } from 'svelte/easing'
 
   let recordingStatus: 'idle' | 'recording' | 'preview' = $state('idle')
   let previewPlaying = $state(false)
@@ -59,16 +60,16 @@
           {#if previewPlaying}
             <div
               class="absolute"
-              in:scale={{ delay: 100, duration: 200 }}
-              out:scale={{ duration: 200 }}
+              in:scale={{ delay: 100, duration: 200, easing: cubicOut }}
+              out:scale={{ duration: 200, easing: cubicIn }}
             >
               <Square fill="currentColor" size={14} />
             </div>
           {:else}
             <div
               class="absolute"
-              in:scale={{ delay: 100, duration: 200 }}
-              out:scale={{ duration: 200 }}
+              in:scale={{ delay: 100, duration: 200, easing: cubicOut }}
+              out:scale={{ duration: 200, easing: cubicIn }}
             >
               <Play fill="currentColor" size={16} />
             </div>
@@ -90,11 +91,11 @@
   >
     <div class="relative flex size-10 items-center justify-center">
       {#if recordingStatus === 'recording'}
-        <div class="absolute" out:scale={{ duration: 200 }}>
+        <div class="absolute" out:scale={{ duration: 200, easing: cubicIn }}>
           <Check class="pr-px" />
         </div>
       {:else}
-        <div class="absolute" in:scale={{ delay: 100, duration: 200 }}>
+        <div class="absolute" in:scale={{ delay: 100, duration: 200, easing: cubicOut }}>
           <Send class="pr-1 pb-px" />
         </div>
       {/if}
