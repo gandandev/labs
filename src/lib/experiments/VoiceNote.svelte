@@ -5,6 +5,72 @@
 
   let recordingStatus: 'idle' | 'recording' | 'preview' = $state('idle')
   let previewPlaying = $state(false)
+
+  let recordingStart = $state(0)
+
+  const MAX_RECORDING_TIME_MS = 10000
+  let recordingLiveDurationMs = $state(0)
+  let recordedTotalDurationSeconds = $state(0)
+
+  let progressPathRef: SVGPathElement | undefined = $state(undefined)
+  let progressPathLength = $state(0)
+
+  function setRecordedTotalDurationFromMs(elapsedMs: number) {
+    let roundedSecs = Math.round(elapsedMs / 1000)
+    if (roundedSecs === 0 && elapsedMs > 0) {
+      recordedTotalDurationSeconds = 1
+    } else {
+      recordedTotalDurationSeconds = roundedSecs
+    }
+  }
+
+  $effect(() => {
+    if (progressPathRef) {
+      progressPathLength = progressPathRef.getTotalLength()
+    }
+  })
+
+  $effect(() => {
+    let animationFrameId: number
+
+    if (recordingStatus === 'recording') {
+      const updateProgress = () => {
+        const elapsed = Date.now() - recordingStart
+        if (elapsed < MAX_RECORDING_TIME_MS) {
+          recordingLiveDurationMs = elapsed
+          animationFrameId = requestAnimationFrame(updateProgress)
+        } else {
+          recordingLiveDurationMs = MAX_RECORDING_TIME_MS
+          if (recordingStatus === 'recording') {
+            setRecordedTotalDurationFromMs(MAX_RECORDING_TIME_MS)
+            recordingStatus = 'preview'
+            previewPlaying = false
+          }
+        }
+      }
+      animationFrameId = requestAnimationFrame(updateProgress)
+    } else {
+      recordingLiveDurationMs = 0
+    }
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId)
+      }
+    }
+  })
+
+  const pillWidth = 82 // 80 leaves a little gap on the side
+  const pillHeight = 40
+  const pillRadius = pillHeight / 2
+
+  const staticPillPathD = `M ${pillWidth},${pillRadius} A ${pillRadius},${pillRadius} 0 0 1 ${pillWidth - pillRadius},${pillHeight} L ${pillRadius},${pillHeight} A ${pillRadius},${pillRadius} 0 0 1 ${pillRadius},0 L ${pillWidth - pillRadius},0 A ${pillRadius},${pillRadius} 0 0 1 ${pillWidth},${pillRadius}`
+
+  const strokeDashoffset = $derived(() => {
+    if (progressPathLength === 0) return progressPathLength
+    const progress = Math.min(1, recordingLiveDurationMs / MAX_RECORDING_TIME_MS)
+    return progressPathLength * (1 - progress)
+  })
 </script>
 
 <div class="flex">
@@ -21,7 +87,7 @@
     <X />
   </button>
   <button
-    class="ease-back-out z-10 flex size-10 cursor-pointer items-center justify-center rounded-full border duration-500 active:scale-95 active:opacity-60"
+    class="ease-back-out relative z-10 flex size-10 cursor-pointer items-center justify-center rounded-full border duration-500 active:scale-95 active:opacity-60"
     class:w-20={recordingStatus !== 'idle'}
     class:bg-red-100={recordingStatus === 'recording'}
     class:bg-white={recordingStatus !== 'recording'}
@@ -30,7 +96,11 @@
     onclick={() => {
       if (recordingStatus === 'idle') {
         recordingStatus = 'recording'
+        recordingStart = Date.now()
+        recordedTotalDurationSeconds = 0 // Reset for new recording
       } else if (recordingStatus === 'recording') {
+        const elapsedMs = Math.min(Date.now() - recordingStart, MAX_RECORDING_TIME_MS)
+        setRecordedTotalDurationFromMs(elapsedMs)
         recordingStatus = 'preview'
         previewPlaying = false
       } else if (recordingStatus === 'preview') {
@@ -38,6 +108,25 @@
       }
     }}
   >
+    {#if recordingStatus === 'recording'}
+      <!-- Absolute right-0 ensures progress indicator stays right-aligned during ease-back-out animation -->
+      <div class="pointer-events-none absolute inset-y-0 right-0">
+        <svg
+          class="h-full w-full overflow-visible stroke-red-500"
+          viewBox={`0 0 ${pillWidth} ${pillHeight}`}
+          fill="none"
+          stroke-width="2.5"
+        >
+          <path
+            bind:this={progressPathRef}
+            d={staticPillPathD}
+            stroke-dasharray={progressPathLength}
+            stroke-dashoffset={strokeDashoffset()}
+            stroke-linecap="round"
+          />
+        </svg>
+      </div>
+    {/if}
     <div class="relative flex size-10 items-center justify-center">
       {#if recordingStatus === 'idle'}
         <div class="absolute" transition:blur={{ duration: 200, easing: cubicOut }}>
@@ -84,7 +173,7 @@
                 </div>
               {/if}
             </div>
-            03s
+            {String(recordedTotalDurationSeconds).padStart(2, '0')}s
           </div>
         </div>
       {/if}
@@ -98,7 +187,15 @@
     class:duration-500={recordingStatus !== 'idle'}
     class:ease-in-out={recordingStatus === 'idle'}
     class:duration-300={recordingStatus === 'idle'}
-    onclick={() => (recordingStatus = recordingStatus === 'recording' ? 'preview' : 'idle')}
+    onclick={() => {
+      if (recordingStatus === 'recording') {
+        const elapsedMs = Math.min(Date.now() - recordingStart, MAX_RECORDING_TIME_MS)
+        setRecordedTotalDurationFromMs(elapsedMs)
+        recordingStatus = 'preview'
+      } else if (recordingStatus === 'preview') {
+        recordingStatus = 'idle'
+      }
+    }}
   >
     <div class="relative flex size-10 items-center justify-center">
       {#if recordingStatus === 'recording'}
