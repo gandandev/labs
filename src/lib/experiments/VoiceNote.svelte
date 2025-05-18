@@ -61,7 +61,10 @@
         </div>
       {:else if recordingStatus === 'preview'}
         <div class="absolute" transition:blur={{ duration: 200, easing: cubicOut }}>
-          <div class="flex items-center gap-1 duration-300" class:text-red-500={previewPlaying}>
+          <div
+            class="flex items-center gap-1 duration-300 starting:scale-90"
+            class:text-red-500={previewPlaying}
+          >
             <div class="relative flex size-4 items-center justify-center">
               {#if previewPlaying}
                 <div
