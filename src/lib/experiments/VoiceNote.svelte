@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Mic, X, Check, Play, Square, Send } from '@lucide/svelte'
-  import { scale } from 'svelte/transition'
+  import { scale, blur } from 'svelte/transition'
   import { cubicIn, cubicOut } from 'svelte/easing'
 
   let recordingStatus: 'idle' | 'recording' | 'preview' = $state('idle')
@@ -38,46 +38,54 @@
       }
     }}
   >
-    {#if recordingStatus === 'idle'}
-      <Mic />
-    {:else if recordingStatus === 'recording'}
-      <div class="flex items-center gap-1">
-        {#each Array(5) as _}
-          <div
-            class="animate-audio-wave h-3 w-1 rounded-full bg-red-500"
-            style="
+    <div class="relative flex size-10 items-center justify-center">
+      {#if recordingStatus === 'idle'}
+        <div class="absolute" transition:blur={{ duration: 200, easing: cubicOut }}>
+          <Mic />
+        </div>
+      {:else if recordingStatus === 'recording'}
+        <div class="absolute" transition:blur={{ duration: 200, easing: cubicOut }}>
+          <div class="flex items-center gap-1">
+            {#each Array(5) as _}
+              <div
+                class="animate-audio-wave h-3 w-1 rounded-full bg-red-500"
+                style="
               animation-duration: {200 + Math.random() * 1000}ms;
               animation-delay: {Math.random() * 100}ms;
               --wave-scale: {0.5 + Math.random() * 0.1};
               --wave-scale-max: {1 + Math.random() * 0.1};
             "
-          ></div>
-        {/each}
-      </div>
-    {:else if recordingStatus === 'preview'}
-      <div class="flex items-center gap-1" class:text-red-500={previewPlaying}>
-        <div class="relative flex size-4 items-center justify-center">
-          {#if previewPlaying}
-            <div
-              class="absolute"
-              in:scale={{ delay: 100, duration: 200, easing: cubicOut }}
-              out:scale={{ duration: 200, easing: cubicIn }}
-            >
-              <Square fill="currentColor" size={14} />
-            </div>
-          {:else}
-            <div
-              class="absolute"
-              in:scale={{ delay: 100, duration: 200, easing: cubicOut }}
-              out:scale={{ duration: 200, easing: cubicIn }}
-            >
-              <Play fill="currentColor" size={16} />
-            </div>
-          {/if}
+              ></div>
+            {/each}
+          </div>
         </div>
-        03s
-      </div>
-    {/if}
+      {:else if recordingStatus === 'preview'}
+        <div class="absolute" transition:blur={{ duration: 200, easing: cubicOut }}>
+          <div class="flex items-center gap-1" class:text-red-500={previewPlaying}>
+            <div class="relative flex size-4 items-center justify-center">
+              {#if previewPlaying}
+                <div
+                  class="absolute"
+                  in:scale={{ delay: 100, duration: 200, easing: cubicOut }}
+                  out:scale={{ duration: 200, easing: cubicIn }}
+                >
+                  <Square fill="currentColor" size={14} />
+                </div>
+              {:else}
+                <div
+                  class="absolute"
+                  in:scale={{ delay: 100, duration: 200, easing: cubicOut }}
+                  out:scale={{ duration: 200, easing: cubicIn }}
+                >
+                  <Play fill="currentColor" size={16} />
+                </div>
+              {/if}
+            </div>
+            03s
+          </div>
+        </div>
+      {/if}
+    </div>
   </button>
   <button
     class="ml-1 size-10 cursor-pointer rounded-full border border-neutral-200 active:scale-95 active:opacity-60"
