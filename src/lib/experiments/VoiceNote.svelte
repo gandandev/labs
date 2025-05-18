@@ -109,6 +109,9 @@
     }}
   >
     {#if recordingStatus === 'recording'}
+      <div
+        class="animate-shine absolute inset-0 rounded-full bg-linear-135 from-40% via-white/90 to-60% bg-size-[300%_300%]"
+      ></div>
       <!-- Absolute right-0 ensures progress indicator stays right-aligned during ease-back-out animation -->
       <div class="pointer-events-none absolute inset-y-0 right-0">
         <svg
@@ -212,6 +215,19 @@
 </div>
 
 <style>
+  .animate-shine {
+    animation: shine 2s ease-out 1;
+  }
+
+  @keyframes shine {
+    0% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+
   .animate-audio-wave {
     animation-name: audio-wave;
     animation-iteration-count: infinite;
