@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Mic, X, Check, Play, Pause, Square, Send } from '@lucide/svelte'
+  import { Mic, X, Check, Play, Square, Send } from '@lucide/svelte'
   import { scale } from 'svelte/transition'
 
   let recordingStatus: 'idle' | 'recording' | 'preview' = $state('idle')
@@ -55,14 +55,14 @@
       </div>
     {:else if recordingStatus === 'preview'}
       <div class="flex items-center gap-1" class:text-red-500={previewPlaying}>
-        <div class="relative size-4">
+        <div class="relative flex size-4 items-center justify-center">
           {#if previewPlaying}
             <div
               class="absolute"
               in:scale={{ delay: 100, duration: 200 }}
               out:scale={{ duration: 200 }}
             >
-              <Pause fill="currentColor" size={16} />
+              <Square fill="currentColor" size={14} />
             </div>
           {:else}
             <div
