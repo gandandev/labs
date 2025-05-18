@@ -54,12 +54,26 @@
         {/each}
       </div>
     {:else if recordingStatus === 'preview'}
-      <div class="flex items-center gap-1">
-        {#if previewPlaying}
-          <Pause fill="currentColor" size={16} />
-        {:else}
-          <Play fill="currentColor" size={16} />
-        {/if}
+      <div class="flex items-center gap-1" class:text-red-500={previewPlaying}>
+        <div class="relative size-4">
+          {#if previewPlaying}
+            <div
+              class="absolute"
+              in:scale={{ delay: 100, duration: 200 }}
+              out:scale={{ duration: 200 }}
+            >
+              <Pause fill="currentColor" size={16} />
+            </div>
+          {:else}
+            <div
+              class="absolute"
+              in:scale={{ delay: 100, duration: 200 }}
+              out:scale={{ duration: 200 }}
+            >
+              <Play fill="currentColor" size={16} />
+            </div>
+          {/if}
+        </div>
         03s
       </div>
     {/if}
