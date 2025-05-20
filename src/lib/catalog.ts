@@ -45,8 +45,8 @@ const experiments: Experiment[] = [
   {
     id: 'voice-note',
     component: VoiceNote,
-    startDate: '2025-05-11',
-    endDate: '2025-05-11',
+    startDate: '2025-05-18',
+    endDate: '2025-05-20',
     credits: {
       name: 'Nitish Khagwal',
       url: 'https://x.com/nitishkmrk/status/1902610054089457684'
