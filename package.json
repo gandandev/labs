@@ -39,6 +39,7 @@
     ]
   },
   "dependencies": {
-    "@lucide/svelte": "^0.507.0"
+    "@lucide/svelte": "^0.507.0",
+    "@number-flow/svelte": "^0.3.7"
   }
 }

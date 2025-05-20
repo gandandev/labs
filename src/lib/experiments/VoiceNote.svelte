@@ -2,6 +2,7 @@
   import { Mic, X, Check, Play, Square, Send } from '@lucide/svelte'
   import { scale, blur } from 'svelte/transition'
   import { cubicIn, cubicOut } from 'svelte/easing'
+  import NumberFlow from '@number-flow/svelte'
 
   let recordingStatus: 'idle' | 'recording' | 'preview' = $state('idle')
   let previewPlaying = $state(false)
@@ -11,6 +12,7 @@
   const MAX_RECORDING_TIME_MS = 10000
   let recordingLiveDurationMs = $state(0)
   let recordedTotalDurationSeconds = $state(0)
+  let previewDurationLeft = $state(0)
 
   let progressPathRef: SVGPathElement | undefined = $state(undefined)
   let progressPathLength = $state(0)
@@ -45,6 +47,7 @@
             setRecordedTotalDurationFromMs(MAX_RECORDING_TIME_MS)
             recordingStatus = 'preview'
             previewPlaying = false
+            previewDurationLeft = recordedTotalDurationSeconds
           }
         }
       }
@@ -57,6 +60,22 @@
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId)
       }
+    }
+  })
+
+  $effect(() => {
+    if (recordingStatus === 'preview' && previewPlaying && previewDurationLeft > 0) {
+      const intervalId = setInterval(() => {
+        previewDurationLeft--
+        if (previewDurationLeft <= 0) {
+          previewPlaying = false
+          clearInterval(intervalId)
+        }
+      }, 1000)
+      return () => clearInterval(intervalId)
+    } else if (recordingStatus !== 'preview' || !previewPlaying) {
+      // Reset to full duration if not playing or not in preview
+      previewDurationLeft = recordedTotalDurationSeconds
     }
   })
 
@@ -103,8 +122,13 @@
         setRecordedTotalDurationFromMs(elapsedMs)
         recordingStatus = 'preview'
         previewPlaying = false
+        previewDurationLeft = recordedTotalDurationSeconds
       } else if (recordingStatus === 'preview') {
         previewPlaying = !previewPlaying
+        if (previewPlaying && previewDurationLeft === 0) {
+          // If trying to play when duration is 0, reset to full duration
+          previewDurationLeft = recordedTotalDurationSeconds
+        }
       }
     }}
   >
@@ -176,7 +200,13 @@
                 </div>
               {/if}
             </div>
-            {String(recordedTotalDurationSeconds).padStart(2, '0')}s
+            <div class="flex w-6 items-center justify-center">
+              <NumberFlow
+                value={previewDurationLeft}
+                format={{ minimumIntegerDigits: 2 }}
+                suffix="s"
+              />
+            </div>
           </div>
         </div>
       {/if}
@@ -195,6 +225,8 @@
         const elapsedMs = Math.min(Date.now() - recordingStart, MAX_RECORDING_TIME_MS)
         setRecordedTotalDurationFromMs(elapsedMs)
         recordingStatus = 'preview'
+        previewPlaying = false
+        previewDurationLeft = recordedTotalDurationSeconds
       } else if (recordingStatus === 'preview') {
         recordingStatus = 'idle'
       }
