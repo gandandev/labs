@@ -2,6 +2,7 @@ import type { Component } from 'svelte'
 import HoldToDelete from './experiments/HoldToDelete.svelte'
 import TextShimmer from './experiments/TextShimmer.svelte'
 import DynamicIslandScreenRecording from './experiments/DynamicIslandScreenRecording.svelte'
+import VoiceNote from './experiments/VoiceNote.svelte'
 
 type Experiment = {
   id: string
@@ -39,6 +40,16 @@ const experiments: Experiment[] = [
     credits: {
       name: 'Apple',
       url: 'https://www.youtube.com/watch?v=m6WMwSj_EbA&t=523s'
+    }
+  },
+  {
+    id: 'voice-note',
+    component: VoiceNote,
+    startDate: '2025-05-18',
+    endDate: '2025-05-20',
+    credits: {
+      name: 'Nitish Khagwal',
+      url: 'https://x.com/nitishkmrk/status/1902610054089457684'
     }
   }
 ]
