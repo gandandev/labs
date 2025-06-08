@@ -34,6 +34,13 @@
     currentPath = [{ x, y }]
   }
 
+  function setupStroke(ctx: CanvasRenderingContext2D) {
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+    ctx.lineWidth = 20
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+  }
+
   function handlePointerMove(e: PointerEvent) {
     if (!drawing || !ctx) return
     const { x, y } = getPointerPos(e)
@@ -41,10 +48,7 @@
     currentPath.push({ x, y })
 
     if (currentPath.length < 3) {
-      ctx.strokeStyle = '#ffffff'
-      ctx.lineWidth = 20
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
+      setupStroke(ctx)
       ctx.beginPath()
       ctx.moveTo(lastX, lastY)
       ctx.lineTo(x, y)
@@ -65,10 +69,7 @@
         y: (p2.y + p3.y) / 2
       }
 
-      ctx.strokeStyle = '#ffffff'
-      ctx.lineWidth = 20
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
+      setupStroke(ctx)
       ctx.beginPath()
       ctx.moveTo(cp.x, cp.y)
       ctx.quadraticCurveTo(p2.x, p2.y, endPoint.x, endPoint.y)
@@ -84,10 +85,7 @@
       const lastPoint = currentPath[currentPath.length - 1]
       const secondLastPoint = currentPath[currentPath.length - 2]
 
-      ctx.strokeStyle = '#ffffff'
-      ctx.lineWidth = 20
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
+      setupStroke(ctx)
       ctx.beginPath()
       ctx.moveTo(secondLastPoint.x, secondLastPoint.y)
       ctx.lineTo(lastPoint.x, lastPoint.y)
