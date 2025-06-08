@@ -29,15 +29,19 @@
     </div>
   </div>
   {#each catalog as experiment}
-    <div class="relative flex h-96 items-center justify-center rounded-2xl bg-white">
+    <div
+      class="relative flex h-96 items-center justify-center overflow-hidden rounded-2xl bg-white"
+    >
       <experiment.component />
-      <span class="absolute bottom-2 left-2 rounded-full px-2 py-1 text-xs text-neutral-500">
+      <span
+        class="absolute bottom-1 left-1 rounded-full bg-white/50 px-2 py-1 text-xs text-black/50 backdrop-blur-lg"
+      >
         {formatDateRange(experiment.startDate, experiment.endDate)}
       </span>
       {#if experiment.credits}
         <a
           href={experiment.credits.url}
-          class="absolute right-2 bottom-2 rounded-full px-2 py-1 text-xs text-neutral-500 duration-150 hover:text-black hover:underline"
+          class="absolute right-1 bottom-1 rounded-full bg-white/50 px-2 py-1 text-xs text-black/50 backdrop-blur-lg duration-150 hover:text-black hover:underline"
           target="_blank"
           rel="noopener noreferrer"
         >
