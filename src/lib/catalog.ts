@@ -3,6 +3,7 @@ import HoldToDelete from './experiments/HoldToDelete.svelte'
 import TextShimmer from './experiments/TextShimmer.svelte'
 import DynamicIslandScreenRecording from './experiments/DynamicIslandScreenRecording.svelte'
 import VoiceNote from './experiments/VoiceNote.svelte'
+import CleanUp from './experiments/CleanUp.svelte'
 
 type Experiment = {
   id: string
@@ -50,6 +51,16 @@ const experiments: Experiment[] = [
     credits: {
       name: 'Nitish Khagwal',
       url: 'https://x.com/nitishkmrk/status/1902610054089457684'
+    }
+  },
+  {
+    id: 'clean-up',
+    component: CleanUp,
+    startDate: '2025-06-08',
+    endDate: '2025-06-08',
+    credits: {
+      name: 'Apple',
+      url: 'https://www.youtube.com/shorts/eNOajxQRxzA'
     }
   }
 ]
