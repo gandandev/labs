@@ -7,6 +7,7 @@
   let lastX = $state(0)
   let lastY = $state(0)
   let currentPath: { x: number; y: number }[] = $state([])
+  let activePath: Path2D | null = $state(null)
 
   function resizeCanvas() {
     if (canvas) {
@@ -32,6 +33,10 @@
     lastX = x
     lastY = y
     currentPath = [{ x, y }]
+
+    // Start a new path
+    activePath = new Path2D()
+    activePath.moveTo(x, y)
   }
 
   function setupStroke(ctx: CanvasRenderingContext2D) {
@@ -42,17 +47,16 @@
   }
 
   function handlePointerMove(e: PointerEvent) {
-    if (!drawing || !ctx) return
+    if (!drawing || !ctx || !activePath) return
     const { x, y } = getPointerPos(e)
 
     currentPath.push({ x, y })
 
+    // Clear the canvas and redraw the entire path
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
     if (currentPath.length < 3) {
-      setupStroke(ctx)
-      ctx.beginPath()
-      ctx.moveTo(lastX, lastY)
-      ctx.lineTo(x, y)
-      ctx.stroke()
+      activePath.lineTo(x, y)
     } else {
       const len = currentPath.length
       const p1 = currentPath[len - 3]
@@ -69,31 +73,20 @@
         y: (p2.y + p3.y) / 2
       }
 
-      setupStroke(ctx)
-      ctx.beginPath()
-      ctx.moveTo(cp.x, cp.y)
-      ctx.quadraticCurveTo(p2.x, p2.y, endPoint.x, endPoint.y)
-      ctx.stroke()
+      activePath.quadraticCurveTo(p2.x, p2.y, endPoint.x, endPoint.y)
     }
+
+    setupStroke(ctx)
+    ctx.stroke(activePath)
 
     lastX = x
     lastY = y
   }
 
   function handlePointerUp() {
-    if (drawing && ctx && currentPath.length > 1) {
-      const lastPoint = currentPath[currentPath.length - 1]
-      const secondLastPoint = currentPath[currentPath.length - 2]
-
-      setupStroke(ctx)
-      ctx.beginPath()
-      ctx.moveTo(secondLastPoint.x, secondLastPoint.y)
-      ctx.lineTo(lastPoint.x, lastPoint.y)
-      ctx.stroke()
-    }
-
     drawing = false
     currentPath = []
+    activePath = null
   }
 
   onMount(() => {
