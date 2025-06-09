@@ -3,9 +3,11 @@
 
   let canvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D | null = $state(null)
+
   let drawing = $state(false)
   let lastX = $state(0)
   let lastY = $state(0)
+
   let currentPath: { x: number; y: number }[] = $state([])
   let activePath: Path2D | null = $state(null)
 
@@ -19,6 +21,7 @@
     }
   }
 
+  // Convert pointer event coordinates to canvas coordinates
   function getPointerPos(e: PointerEvent) {
     const rect = canvas.getBoundingClientRect()
     return {
@@ -27,6 +30,7 @@
     }
   }
 
+  // Start drawing when pointer is pressed down
   function handlePointerDown(e: PointerEvent) {
     drawing = true
     const { x, y } = getPointerPos(e)
@@ -34,11 +38,12 @@
     lastY = y
     currentPath = [{ x, y }]
 
-    // Start a new path
+    // Create new path for current stroke
     activePath = new Path2D()
     activePath.moveTo(x, y)
   }
 
+  // Configure stroke appearance (white brush with opacity)
   function setupStroke(ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
     ctx.lineWidth = 20
@@ -46,28 +51,32 @@
     ctx.lineJoin = 'round'
   }
 
+  // Handle drawing as pointer moves
   function handlePointerMove(e: PointerEvent) {
     if (!drawing || !ctx || !activePath) return
     const { x, y } = getPointerPos(e)
 
     currentPath.push({ x, y })
 
-    // Clear the canvas and redraw the entire path
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+    // Draw straight lines for first few points
     if (currentPath.length < 3) {
       activePath.lineTo(x, y)
     } else {
+      // Use quadratic curves for smoother drawing
       const len = currentPath.length
       const p1 = currentPath[len - 3]
       const p2 = currentPath[len - 2]
       const p3 = currentPath[len - 1]
 
+      // Calculate control point for smooth curve
       const cp = {
         x: (p1.x + p2.x) / 2,
         y: (p1.y + p2.y) / 2
       }
 
+      // Calculate end point for smooth curve
       const endPoint = {
         x: (p2.x + p3.x) / 2,
         y: (p2.y + p3.y) / 2
@@ -76,6 +85,7 @@
       activePath.quadraticCurveTo(p2.x, p2.y, endPoint.x, endPoint.y)
     }
 
+    // Apply stroke styling and draw the path
     setupStroke(ctx)
     ctx.stroke(activePath)
 
