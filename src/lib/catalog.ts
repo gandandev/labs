@@ -3,6 +3,7 @@ import HoldToDelete from './experiments/HoldToDelete.svelte'
 import TextShimmer from './experiments/TextShimmer.svelte'
 import DynamicIslandScreenRecording from './experiments/DynamicIslandScreenRecording.svelte'
 import VoiceNote from './experiments/VoiceNote.svelte'
+import SpaceDatetime from './experiments/SpaceDatetime.svelte'
 
 type Experiment = {
   id: string
@@ -51,6 +52,12 @@ const experiments: Experiment[] = [
       name: 'Nitish Khagwal',
       url: 'https://x.com/nitishkmrk/status/1902610054089457684'
     }
+  },
+  {
+    id: 'space-datetime',
+    component: SpaceDatetime,
+    startDate: '2025-06-13',
+    endDate: '2025-06-13'
   }
 ]
 
