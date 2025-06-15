@@ -20,7 +20,7 @@
   </div>
 {:else}
   <button
-    class="transition-300 gap-2Z flex cursor-pointer items-center rounded-xl bg-neutral-100 px-3 py-2"
+    class="transition-300 flex cursor-pointer items-center gap-2 rounded-xl bg-neutral-100 px-3 py-2"
     onclick={() => (isOpen = true)}
   >
     <Calendar class="size-5" />
