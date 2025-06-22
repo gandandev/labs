@@ -14,7 +14,7 @@
   let displayText = $derived(
     `${selectedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, ${selectedDate.toLocaleTimeString(
       undefined,
-      { hour: 'numeric', minute: '2-digit', second: '2-digit' }
+      { hour: 'numeric', minute: '2-digit' }
     )}`
   )
 
