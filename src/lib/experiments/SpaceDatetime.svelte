@@ -9,8 +9,6 @@
   let isOpen = $state(false)
   let view: 'sun' | 'moon' = $state('sun')
 
-  let canvas: HTMLCanvasElement | null = $state(null)
-
   let labelWidth = $state(0)
 
   let displayText = $derived(
@@ -19,12 +17,6 @@
       { hour: 'numeric', minute: '2-digit' }
     )}`
   )
-
-  onMount(() => {
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-  })
 </script>
 
 {#if labelWidth > 0}
