@@ -9,6 +9,15 @@
 
   let canvas: HTMLCanvasElement | null = $state(null)
 
+  let labelWidth = $state(0)
+
+  let displayText = $derived(
+    `${selectedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, ${selectedDate.toLocaleTimeString(
+      undefined,
+      { hour: 'numeric', minute: '2-digit', second: '2-digit' }
+    )}`
+  )
+
   onMount(() => {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -21,18 +30,19 @@
   class:mixed-transitions-open={isOpen}
   class:mixed-transitions-closed={!isOpen}
   class:h-10={!isOpen}
-  class:w-42={!isOpen}
   class:size-full={isOpen}
   class:bg-neutral-100={!isOpen}
   class:bg-black={isOpen}
   class:cursor-pointer={!isOpen}
+  style:width={!isOpen ? `${labelWidth}px` : '100%'}
   onclick={() => (isOpen = !isOpen)}
 >
   {#if isOpen}
     <canvas bind:this={canvas} class="h-full w-full"></canvas>
   {:else}
     <div
-      class="absolute inset-0 mx-auto flex w-42 items-center justify-evenly"
+      class="absolute inset-0 mx-auto flex items-center justify-center gap-2"
+      style:width={`${labelWidth}px`}
       in:versatile={{
         blur: {
           duration: 300,
@@ -69,15 +79,20 @@
       }}
     >
       <Calendar class="size-5" />
-      <span>
-        {selectedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, {selectedDate.toLocaleTimeString(
-          undefined,
-          { hour: 'numeric', minute: '2-digit' }
-        )}
-      </span>
+      <span>{displayText}</span>
     </div>
   {/if}
 </button>
+
+<!-- Invisible element used to measure the width of the date label -->
+<div
+  bind:clientWidth={labelWidth}
+  class="invisible absolute flex h-10 items-center gap-2 px-3 whitespace-nowrap"
+  aria-hidden="true"
+>
+  <Calendar class="size-5" />
+  <span>{displayText}</span>
+</div>
 
 <style>
   .mixed-transitions-open {
