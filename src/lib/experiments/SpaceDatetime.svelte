@@ -196,24 +196,7 @@
       <div
         class="absolute inset-0 mx-auto flex items-center justify-center gap-2"
         style:width={`${labelWidth}px`}
-        in:versatile={{
-          blur: {
-            duration: 300,
-            from: 10,
-            to: 0
-          },
-          scale: {
-            duration: 300,
-            from: 1.2,
-            to: 1
-          },
-          opacity: {
-            duration: 300,
-            from: 0,
-            to: 1
-          }
-        }}
-        out:versatile={{
+        transition:versatile={{
           blur: {
             duration: 300,
             from: 10,
