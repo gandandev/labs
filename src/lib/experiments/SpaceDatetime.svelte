@@ -21,6 +21,33 @@
   let earthX = $derived(sunCenterX + orbitRadiusX * Math.sin(earthAngle))
   let earthY = $derived(sunCenterY - orbitRadiusY * Math.cos(earthAngle))
 
+  let calculatedDate = $derived.by(() => {
+    // Normalize angle to 0-2π range
+    const normalizedAngle = ((earthAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
+
+    // Map angle to day of year (0° = January 1st, full rotation = full year)
+    const dayOfYear = Math.floor((normalizedAngle / (2 * Math.PI)) * 365.25)
+
+    // Create date for current year starting from January 1st
+    const currentYear = new Date().getFullYear()
+    const startOfYear = new Date(currentYear, 0, 1) // January 1st of current year
+
+    const newDate = new Date(startOfYear)
+    newDate.setDate(startOfYear.getDate() + dayOfYear)
+
+    // Preserve the current time
+    const now = new Date()
+    newDate.setHours(now.getHours())
+    newDate.setMinutes(now.getMinutes())
+    newDate.setSeconds(now.getSeconds())
+
+    return newDate
+  })
+
+  $effect(() => {
+    selectedDate = calculatedDate
+  })
+
   let displayText = $derived(
     `${selectedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, ${selectedDate.toLocaleTimeString(
       undefined,
