@@ -10,6 +10,16 @@
   let view: 'sun' | 'moon' = $state('sun')
 
   let labelWidth = $state(0)
+  let isDragging = $state(false)
+  let earthAngle = $state(0)
+
+  const sunCenterX = 960
+  const sunCenterY = 540
+  const orbitRadiusX = 563 // Semi-major axis (960 - 397)
+  const orbitRadiusY = 299 // Semi-minor axis (540 - 240.5)
+
+  let earthX = $derived(sunCenterX + orbitRadiusX * Math.sin(earthAngle))
+  let earthY = $derived(sunCenterY - orbitRadiusY * Math.cos(earthAngle))
 
   let displayText = $derived(
     `${selectedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, ${selectedDate.toLocaleTimeString(
@@ -17,6 +27,40 @@
       { hour: 'numeric', minute: '2-digit' }
     )}`
   )
+
+  function handleMouseDown(e: MouseEvent) {
+    isDragging = true
+    e.preventDefault()
+  }
+
+  function handleMouseMove(e: MouseEvent) {
+    if (!isDragging) return
+
+    const svg = e.currentTarget as SVGElement
+    const rect = svg.getBoundingClientRect()
+    const mouseX = ((e.clientX - rect.left) / rect.width) * 1920
+    const mouseY = ((e.clientY - rect.top) / rect.height) * 1080
+
+    const deltaX = mouseX - sunCenterX
+    const deltaY = mouseY - sunCenterY
+    earthAngle = Math.atan2(deltaX, -deltaY)
+  }
+
+  function handleMouseUp() {
+    isDragging = false
+  }
+
+  onMount(() => {
+    earthAngle = 0
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  })
 </script>
 
 {#if labelWidth > 0}
@@ -43,14 +87,35 @@
     }}
   >
     {#if isOpen}
-      <svg viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        viewBox="0 0 1920 1080"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        onmousemove={handleMouseMove}
+        role="img"
+      >
+        <!-- Sun -->
         <circle cx="960" cy="540" r="50" fill="#FF0000" />
+
+        <!-- Earth orbit -->
         <path
           d="M960 240.5C1115.4 240.5 1256.07 274.01 1357.87 328.163C1459.69 382.328 1522.5 457.071 1522.5 539.5C1522.5 621.929 1459.69 696.672 1357.87 750.837C1256.07 804.99 1115.4 838.5 960 838.5C804.597 838.5 663.931 804.99 562.134 750.837C460.315 696.672 397.5 621.929 397.5 539.5C397.5 457.071 460.315 382.328 562.134 328.163C663.931 274.01 804.597 240.5 960 240.5Z"
           stroke-width="5"
           stroke="white"
         />
-        <circle cx="397" cy="540" r="50" fill="#00F43D" />
+
+        <!-- Earth -->
+        <circle
+          cx={earthX}
+          cy={earthY}
+          r="50"
+          fill="#00F43D"
+          class="cursor-grab active:cursor-grabbing"
+          class:cursor-grabbing={isDragging}
+          onmousedown={handleMouseDown}
+          role="button"
+          tabindex="0"
+        />
       </svg>
 
       <div
