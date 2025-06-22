@@ -100,7 +100,6 @@
 <style>
   .mixed-transitions-open {
     --ease: cubic-bezier(0.5, 0, 0.3, 1);
-
     transition:
       width 300ms var(--ease),
       height 300ms var(--ease),
