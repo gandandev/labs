@@ -38,6 +38,17 @@ const DEFAULTS = {
   blur: 0,
   opacity: 1,
   duration: 300
+} as const
+
+interface NormalizedProperty {
+  from: number
+  to: number
+  duration: number
+  easing?: EasingFunction
+  // Pre-calculated optimization values
+  range: number
+  durationRatio: number
+  hasAnimation: boolean
 }
 
 function normalizeProperty(
@@ -45,31 +56,35 @@ function normalizeProperty(
   defaultValue: number,
   globalDuration: number,
   globalEasing?: EasingFunction
-): { from: number; to: number; duration: number; easing?: EasingFunction } {
-  if (value === undefined) {
-    return { from: defaultValue, to: defaultValue, duration: globalDuration, easing: globalEasing }
-  }
+): NormalizedProperty {
+  let from: number, to: number, duration: number, easing: EasingFunction | undefined
 
-  if (typeof value === 'number') {
-    return { from: value, to: defaultValue, duration: globalDuration, easing: globalEasing }
+  if (value === undefined) {
+    from = to = defaultValue
+    duration = globalDuration
+    easing = globalEasing
+  } else if (typeof value === 'number') {
+    from = value
+    to = defaultValue
+    duration = globalDuration
+    easing = globalEasing
+  } else {
+    from = value.from ?? defaultValue
+    to = value.to ?? defaultValue
+    duration = value.duration ?? globalDuration
+    easing = value.easing ?? globalEasing
   }
 
   return {
-    from: value.from ?? defaultValue,
-    to: value.to ?? defaultValue,
-    duration: value.duration ?? globalDuration,
-    easing: value.easing ?? globalEasing
+    from,
+    to,
+    duration,
+    easing,
+    // Pre-calculate optimization values
+    range: to - from,
+    durationRatio: 0, // Will be set after totalDuration is calculated
+    hasAnimation: from !== to
   }
-}
-
-function getPropertyProgress(t: number, totalDuration: number, propertyDuration: number): number {
-  // Calculate how far we are in the property's individual timeline
-  const propertyProgress = Math.min(1, (t * totalDuration) / propertyDuration)
-  return propertyProgress
-}
-
-function interpolate(from: number, to: number, progress: number): number {
-  return from + (to - from) * progress
 }
 
 export function versatile(
@@ -109,7 +124,11 @@ export function versatile(
   if (!hasAnimations) {
     // Apply subtle defaults
     scale.from = 0.95
+    scale.range = scale.to - scale.from
+    scale.hasAnimation = true
     opacity.from = 0
+    opacity.range = opacity.to - opacity.from
+    opacity.hasAnimation = true
   }
 
   // Calculate total duration (longest individual duration)
@@ -122,65 +141,145 @@ export function versatile(
     opacity.duration
   )
 
+  // Pre-calculate duration ratios for performance
+  scale.durationRatio = totalDuration / scale.duration
+  x.durationRatio = totalDuration / x.duration
+  y.durationRatio = totalDuration / y.duration
+  rotate.durationRatio = totalDuration / rotate.duration
+  blur.durationRatio = totalDuration / blur.duration
+  opacity.durationRatio = totalDuration / opacity.duration
+
+  // Pre-calculate static CSS parts
+  const transformOriginCss = `transform-origin: ${origin};`
+
+  // Create optimized animation functions for each property
+  const scaleAnimator = scale.hasAnimation
+    ? (t: number) => {
+        const progress = Math.min(1, t * scale.durationRatio)
+        const easedProgress = scale.easing ? scale.easing(progress) : progress
+        return scale.from + scale.range * easedProgress
+      }
+    : null
+
+  const xAnimator = x.hasAnimation
+    ? (t: number) => {
+        const progress = Math.min(1, t * x.durationRatio)
+        const easedProgress = x.easing ? x.easing(progress) : progress
+        return x.from + x.range * easedProgress
+      }
+    : null
+
+  const yAnimator = y.hasAnimation
+    ? (t: number) => {
+        const progress = Math.min(1, t * y.durationRatio)
+        const easedProgress = y.easing ? y.easing(progress) : progress
+        return y.from + y.range * easedProgress
+      }
+    : null
+
+  const rotateAnimator = rotate.hasAnimation
+    ? (t: number) => {
+        const progress = Math.min(1, t * rotate.durationRatio)
+        const easedProgress = rotate.easing ? rotate.easing(progress) : progress
+        return rotate.from + rotate.range * easedProgress
+      }
+    : null
+
+  const blurAnimator = blur.hasAnimation
+    ? (t: number) => {
+        const progress = Math.min(1, t * blur.durationRatio)
+        const easedProgress = blur.easing ? blur.easing(progress) : progress
+        return blur.from + blur.range * easedProgress
+      }
+    : null
+
+  const opacityAnimator = opacity.hasAnimation
+    ? (t: number) => {
+        const progress = Math.min(1, t * opacity.durationRatio)
+        const easedProgress = opacity.easing ? opacity.easing(progress) : progress
+        return opacity.from + opacity.range * easedProgress
+      }
+    : null
+
+  // Pre-determine which properties need processing
+  const needsTransform = !!(scaleAnimator || xAnimator || yAnimator || rotateAnimator)
+  const needsFilter = !!blurAnimator
+  const needsOpacity = !!opacityAnimator
+
   return {
     duration: totalDuration,
     delay,
     easing,
     css: (t: number, u: number) => {
-      // Calculate progress for each property based on its individual duration
-      const scaleProgress = getPropertyProgress(t, totalDuration, scale.duration)
-      const xProgress = getPropertyProgress(t, totalDuration, x.duration)
-      const yProgress = getPropertyProgress(t, totalDuration, y.duration)
-      const rotateProgress = getPropertyProgress(t, totalDuration, rotate.duration)
-      const blurProgress = getPropertyProgress(t, totalDuration, blur.duration)
-      const opacityProgress = getPropertyProgress(t, totalDuration, opacity.duration)
-
-      // Apply individual easing to each progress
-      const easedScaleProgress = scale.easing ? scale.easing(scaleProgress) : scaleProgress
-      const easedXProgress = x.easing ? x.easing(xProgress) : xProgress
-      const easedYProgress = y.easing ? y.easing(yProgress) : yProgress
-      const easedRotateProgress = rotate.easing ? rotate.easing(rotateProgress) : rotateProgress
-      const easedBlurProgress = blur.easing ? blur.easing(blurProgress) : blurProgress
-      const easedOpacityProgress = opacity.easing
-        ? opacity.easing(opacityProgress)
-        : opacityProgress
-
-      // Interpolate values
-      const currentScale = interpolate(scale.from, scale.to, easedScaleProgress)
-      const currentX = interpolate(x.from, x.to, easedXProgress)
-      const currentY = interpolate(y.from, y.to, easedYProgress)
-      const currentRotate = interpolate(rotate.from, rotate.to, easedRotateProgress)
-      const currentBlur = interpolate(blur.from, blur.to, easedBlurProgress)
-      const currentOpacity = interpolate(opacity.from, opacity.to, easedOpacityProgress)
-
-      // Build CSS
       let css = ''
 
-      // Transform
-      const transforms = []
-      if (currentScale !== 1) transforms.push(`scale(${currentScale})`)
-      if (currentX !== 0) transforms.push(`translateX(${currentX}px)`)
-      if (currentY !== 0) transforms.push(`translateY(${currentY}px)`)
-      if (currentRotate !== 0) transforms.push(`rotate(${currentRotate}deg)`)
+      // Handle transforms - build directly without arrays
+      if (needsTransform) {
+        let transformCss = 'transform: '
+        let hasTransforms = false
 
-      if (transforms.length > 0) {
-        css += `transform: ${transforms.join(' ')};`
-        css += `transform-origin: ${origin};`
+        if (scaleAnimator) {
+          const currentScale = scaleAnimator(t)
+          if (currentScale !== 1) {
+            transformCss += `scale(${currentScale})`
+            hasTransforms = true
+          }
+        }
+
+        if (xAnimator) {
+          const currentX = xAnimator(t)
+          if (currentX !== 0) {
+            if (hasTransforms) transformCss += ' '
+            transformCss += `translateX(${currentX}px)`
+            hasTransforms = true
+          }
+        }
+
+        if (yAnimator) {
+          const currentY = yAnimator(t)
+          if (currentY !== 0) {
+            if (hasTransforms) transformCss += ' '
+            transformCss += `translateY(${currentY}px)`
+            hasTransforms = true
+          }
+        }
+
+        if (rotateAnimator) {
+          const currentRotate = rotateAnimator(t)
+          if (currentRotate !== 0) {
+            if (hasTransforms) transformCss += ' '
+            transformCss += `rotate(${currentRotate}deg)`
+            hasTransforms = true
+          }
+        }
+
+        if (hasTransforms) {
+          css += transformCss + ';' + transformOriginCss
+        }
       }
 
-      // Filter
-      if (currentBlur !== 0) {
-        css += `filter: blur(${currentBlur}px);`
+      // Handle filter
+      if (needsFilter && blurAnimator) {
+        const currentBlur = blurAnimator(t)
+        if (currentBlur !== 0) {
+          css += `filter: blur(${currentBlur}px);`
+        }
       }
 
-      // Opacity
-      if (currentOpacity !== 1) {
-        css += `opacity: ${currentOpacity};`
+      // Handle opacity
+      if (needsOpacity && opacityAnimator) {
+        const currentOpacity = opacityAnimator(t)
+        if (currentOpacity !== 1) {
+          css += `opacity: ${currentOpacity};`
+        }
       }
 
-      // Custom CSS injection
+      // Add custom CSS if provided
       if (customCss) {
-        css += customCss(t, u)
+        const customCssResult = customCss(t, u)
+        if (customCssResult) {
+          css += customCssResult
+        }
       }
 
       return css
