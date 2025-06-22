@@ -1,12 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Calendar, Check, Sun } from '@lucide/svelte'
+  import { Calendar, Check, Sun, Moon } from '@lucide/svelte'
   import { versatile } from '../transitions'
-  import { fly } from 'svelte/transition'
+  import { fly, scale } from 'svelte/transition'
   import { backOut } from 'svelte/easing'
 
   let selectedDate = $state(new Date())
   let isOpen = $state(false)
+  let view: 'sun' | 'moon' = $state('sun')
 
   let canvas: HTMLCanvasElement | null = $state(null)
 
@@ -58,9 +59,29 @@
         out:fly={{ duration: 100, y: -50 }}
       >
         <button
-          class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/75 shadow-[inset_0.7px_0.7px_0.5px_0_white,inset_-0.7px_-0.7px_0.5px_0_white] duration-200 active:scale-95 active:opacity-80"
+          class="relative flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/75 shadow-[inset_0.7px_0.7px_0.5px_0_white,inset_-0.7px_-0.7px_0.5px_0_white] duration-200 active:scale-95 active:opacity-80"
+          onclick={(e) => {
+            e.stopPropagation()
+            view = view === 'sun' ? 'moon' : 'sun'
+          }}
         >
-          <Sun class="size-6 pt-0.5" />
+          {#if view == 'sun'}
+            <div
+              class="absolute"
+              in:scale={{ duration: 200, start: 0.5, delay: 10 }}
+              out:scale={{ duration: 200, start: 0.5 }}
+            >
+              <Sun class="size-6 pt-0.5" />
+            </div>
+          {:else}
+            <div
+              class="absolute"
+              in:scale={{ duration: 200, start: 0.5, delay: 10 }}
+              out:scale={{ duration: 200, start: 0.5 }}
+            >
+              <Moon class="size-6 pt-0.5" />
+            </div>
+          {/if}
         </button>
         <button
           class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/75 shadow-[inset_0.7px_0.7px_0.5px_0_white,inset_-0.7px_-0.7px_0.5px_0_white] duration-200 active:scale-95 active:opacity-80"
