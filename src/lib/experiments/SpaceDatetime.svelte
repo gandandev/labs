@@ -321,8 +321,7 @@
     transition:
       width 300ms var(--ease),
       height 300ms var(--ease),
-      background-color 500ms ease,
-      cursor 500ms ease;
+      background-color 500ms ease;
   }
 
   .mixed-transitions-closed {
@@ -330,7 +329,6 @@
     transition:
       width 500ms 100ms var(--ease-back-out-small),
       height 500ms 100ms var(--ease-back-out-small),
-      background-color 300ms 100ms ease,
-      cursor 500ms 100ms ease;
+      background-color 350ms 100ms ease;
   }
 </style>
