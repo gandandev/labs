@@ -33,7 +33,6 @@
   {:else}
     <div
       class="absolute inset-0 mx-auto flex w-42 items-center justify-evenly"
-      class:starting:w-42={!isOpen}
       in:versatile={{
         blur: {
           duration: 300,
