@@ -10,7 +10,7 @@
   let view: 'sun' | 'moon' = $state('sun')
 
   let labelWidth = $state(0)
-  let isDragging = $state(false)
+  let isEarthDragging = $state(false)
   let isMoonDragging = $state(false)
   let earthAngle = $state(0)
   let moonAngle = $state(0)
@@ -78,7 +78,7 @@
   )
 
   function handleMouseDown(e: MouseEvent) {
-    isDragging = true
+    isEarthDragging = true
     e.preventDefault()
   }
 
@@ -89,14 +89,14 @@
   }
 
   function handleMouseMove(e: MouseEvent) {
-    if (!isDragging && !isMoonDragging) return
+    if (!isEarthDragging && !isMoonDragging) return
 
     const svg = e.currentTarget as SVGElement
     const rect = svg.getBoundingClientRect()
     const mouseX = ((e.clientX - rect.left) / rect.width) * 1920
     const mouseY = ((e.clientY - rect.top) / rect.height) * 1080
 
-    if (isDragging) {
+    if (isEarthDragging) {
       const deltaX = mouseX - sunCenterX
       const deltaY = mouseY - sunCenterY
       earthAngle = Math.atan2(deltaX, -deltaY)
@@ -110,7 +110,7 @@
   }
 
   function handleMouseUp() {
-    isDragging = false
+    isEarthDragging = false
     isMoonDragging = false
   }
 
@@ -158,7 +158,7 @@
         xmlns="http://www.w3.org/2000/svg"
         onmousemove={handleMouseMove}
         role="img"
-        class:cursor-grabbing={isDragging || isMoonDragging}
+        class:cursor-grabbing={isEarthDragging || isMoonDragging}
         in:versatile={{
           blur: {
             duration: 500,
@@ -224,7 +224,7 @@
           r="50"
           fill="#00F43D"
           class="cursor-grab active:cursor-grabbing"
-          class:cursor-grabbing={isDragging}
+          class:cursor-grabbing={isEarthDragging}
           onmousedown={handleMouseDown}
           role="button"
           tabindex="0"
