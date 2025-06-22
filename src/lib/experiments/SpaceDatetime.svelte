@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { Calendar } from '@lucide/svelte'
-  import { blur } from 'svelte/transition'
   import { versatile } from '../transitions'
 
   let selectedDate = $state(new Date())
