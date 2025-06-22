@@ -120,6 +120,7 @@
         xmlns="http://www.w3.org/2000/svg"
         onmousemove={handleMouseMove}
         role="img"
+        class:cursor-grabbing={isDragging}
         in:versatile={{
           blur: {
             duration: 500,
