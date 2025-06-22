@@ -328,9 +328,9 @@
   .mixed-transitions-closed {
     --ease-back-out-small: cubic-bezier(0.4, 1.2, 0.5, 1);
     transition:
-      width 500ms var(--ease-back-out-small),
-      height 500ms var(--ease-back-out-small),
-      background-color 300ms ease,
-      cursor 500ms ease;
+      width 500ms 100ms var(--ease-back-out-small),
+      height 500ms 100ms var(--ease-back-out-small),
+      background-color 300ms 100ms ease,
+      cursor 500ms 100ms ease;
   }
 </style>
