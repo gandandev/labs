@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { Calendar } from '@lucide/svelte'
   import { versatile } from '../transitions'
+  import { fly } from 'svelte/transition'
 
   let selectedDate = $state(new Date())
   let isOpen = $state(false)
@@ -24,64 +25,67 @@
   })
 </script>
 
-<button
-  class="flex justify-center rounded-xl"
-  class:mixed-transitions-open={isOpen}
-  class:mixed-transitions-closed={!isOpen}
-  class:h-10={!isOpen}
-  class:size-full={isOpen}
-  class:bg-neutral-100={!isOpen}
-  class:bg-black={isOpen}
-  class:cursor-pointer={!isOpen}
-  style:width={!isOpen ? `${labelWidth}px` : '100%'}
-  onclick={() => (isOpen = !isOpen)}
->
-  {#if isOpen}
-    <canvas bind:this={canvas} class="h-full w-full"></canvas>
-  {:else}
-    <div
-      class="absolute inset-0 mx-auto flex items-center justify-center gap-2"
-      style:width={`${labelWidth}px`}
-      in:versatile={{
-        blur: {
-          duration: 300,
-          from: 10,
-          to: 0
-        },
-        scale: {
-          duration: 300,
-          from: 1.2,
-          to: 1
-        },
-        opacity: {
-          duration: 300,
-          from: 0,
-          to: 1
-        }
-      }}
-      out:versatile={{
-        blur: {
-          duration: 300,
-          from: 10,
-          to: 0
-        },
-        scale: {
-          duration: 300,
-          from: 1.2,
-          to: 1
-        },
-        opacity: {
-          duration: 200,
-          from: 0,
-          to: 1
-        }
-      }}
-    >
-      <Calendar class="size-5" />
-      <span>{displayText}</span>
-    </div>
-  {/if}
-</button>
+{#if labelWidth > 0}
+  <button
+    class="flex justify-center rounded-xl"
+    class:mixed-transitions-open={isOpen}
+    class:mixed-transitions-closed={!isOpen}
+    class:h-10={!isOpen}
+    class:size-full={isOpen}
+    class:bg-neutral-100={!isOpen}
+    class:bg-black={isOpen}
+    class:cursor-pointer={!isOpen}
+    style:width={!isOpen ? `${labelWidth}px` : '100%'}
+    onclick={() => (isOpen = !isOpen)}
+    in:fly={{ duration: 300, y: 10 }}
+  >
+    {#if isOpen}
+      <canvas bind:this={canvas} class="h-full w-full"></canvas>
+    {:else}
+      <div
+        class="absolute inset-0 mx-auto flex items-center justify-center gap-2"
+        style:width={`${labelWidth}px`}
+        in:versatile={{
+          blur: {
+            duration: 300,
+            from: 10,
+            to: 0
+          },
+          scale: {
+            duration: 300,
+            from: 1.2,
+            to: 1
+          },
+          opacity: {
+            duration: 300,
+            from: 0,
+            to: 1
+          }
+        }}
+        out:versatile={{
+          blur: {
+            duration: 300,
+            from: 10,
+            to: 0
+          },
+          scale: {
+            duration: 300,
+            from: 1.2,
+            to: 1
+          },
+          opacity: {
+            duration: 200,
+            from: 0,
+            to: 1
+          }
+        }}
+      >
+        <Calendar class="size-5" />
+        <span>{displayText}</span>
+      </div>
+    {/if}
+  </button>
+{/if}
 
 <!-- Invisible element used to measure the width of the date label -->
 <div
