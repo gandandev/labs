@@ -175,6 +175,13 @@
             </div>
           {/if}
         </button>
+
+        <span
+          class="flex h-10 w-42 items-center justify-center rounded-full bg-white/25 text-white shadow-[inset_0.7px_0.7px_0.5px_0_rgba(255,255,255,0.4),inset_-0.7px_-0.7px_0.5px_0_rgba(255,255,255,0.4)]"
+        >
+          {displayText}
+        </span>
+
         <button
           class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/75 shadow-[inset_0.7px_0.7px_0.5px_0_white,inset_-0.7px_-0.7px_0.5px_0_white] duration-200 active:scale-95 active:opacity-80"
           onclick={(e) => {
