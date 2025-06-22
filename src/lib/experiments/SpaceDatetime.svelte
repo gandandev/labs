@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Calendar, Check, Sun, Moon } from '@lucide/svelte'
+  import { Calendar, Check, Clock } from '@lucide/svelte'
   import { versatile } from '../transitions'
   import { fly, scale } from 'svelte/transition'
   import { backOut } from 'svelte/easing'
@@ -163,7 +163,7 @@
               in:scale={{ duration: 200, start: 0.5, delay: 10 }}
               out:scale={{ duration: 200, start: 0.5 }}
             >
-              <Sun class="size-6 pt-0.5" />
+              <Calendar class="size-6" />
             </div>
           {:else}
             <div
@@ -171,7 +171,7 @@
               in:scale={{ duration: 200, start: 0.5, delay: 10 }}
               out:scale={{ duration: 200, start: 0.5 }}
             >
-              <Moon class="size-6 pt-0.5" />
+              <Clock class="size-6" />
             </div>
           {/if}
         </button>
