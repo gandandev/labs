@@ -3,7 +3,7 @@
   import { Calendar, Check, Clock } from '@lucide/svelte'
   import { versatile } from '../transitions'
   import { fly, scale } from 'svelte/transition'
-  import { backOut } from 'svelte/easing'
+  import { backOut, cubicOut } from 'svelte/easing'
 
   let selectedDate = $state(new Date())
   let isOpen = $state(false)
@@ -120,6 +120,42 @@
         xmlns="http://www.w3.org/2000/svg"
         onmousemove={handleMouseMove}
         role="img"
+        in:versatile={{
+          blur: {
+            duration: 500,
+            from: 10,
+            to: 0
+          },
+          scale: {
+            duration: 1000,
+            from: 0,
+            to: 1
+          },
+          opacity: {
+            duration: 200,
+            from: 0,
+            to: 1
+          },
+          easing: cubicOut
+        }}
+        out:versatile={{
+          blur: {
+            duration: 300,
+            from: 10,
+            to: 0
+          },
+          scale: {
+            duration: 300,
+            from: 0,
+            to: 1
+          },
+          opacity: {
+            duration: 200,
+            from: 0,
+            to: 1
+          },
+          easing: cubicOut
+        }}
       >
         <!-- Sun -->
         <circle cx="960" cy="540" r="50" fill="#FF0000" />
