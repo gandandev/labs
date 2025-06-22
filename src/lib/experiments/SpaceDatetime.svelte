@@ -11,15 +11,22 @@
 
   let labelWidth = $state(0)
   let isDragging = $state(false)
+  let isMoonDragging = $state(false)
   let earthAngle = $state(0)
+  let moonAngle = $state(0)
 
   const sunCenterX = 960
   const sunCenterY = 540
   const orbitRadiusX = 563 // Semi-major axis (960 - 397)
   const orbitRadiusY = 299 // Semi-minor axis (540 - 240.5)
 
+  const moonOrbitRadius = 120
+
   let earthX = $derived(sunCenterX + orbitRadiusX * Math.sin(earthAngle))
   let earthY = $derived(sunCenterY - orbitRadiusY * Math.cos(earthAngle))
+
+  let moonX = $derived(earthX + moonOrbitRadius * Math.sin(moonAngle))
+  let moonY = $derived(earthY - moonOrbitRadius * Math.cos(moonAngle))
 
   let calculatedDate = $derived.by(() => {
     // Normalize angle to 0-2π range
@@ -60,25 +67,41 @@
     e.preventDefault()
   }
 
+  function handleMoonMouseDown(e: MouseEvent) {
+    isMoonDragging = true
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
   function handleMouseMove(e: MouseEvent) {
-    if (!isDragging) return
+    if (!isDragging && !isMoonDragging) return
 
     const svg = e.currentTarget as SVGElement
     const rect = svg.getBoundingClientRect()
     const mouseX = ((e.clientX - rect.left) / rect.width) * 1920
     const mouseY = ((e.clientY - rect.top) / rect.height) * 1080
 
-    const deltaX = mouseX - sunCenterX
-    const deltaY = mouseY - sunCenterY
-    earthAngle = Math.atan2(deltaX, -deltaY)
+    if (isDragging) {
+      const deltaX = mouseX - sunCenterX
+      const deltaY = mouseY - sunCenterY
+      earthAngle = Math.atan2(deltaX, -deltaY)
+    }
+
+    if (isMoonDragging) {
+      const deltaX = mouseX - earthX
+      const deltaY = mouseY - earthY
+      moonAngle = Math.atan2(deltaX, -deltaY)
+    }
   }
 
   function handleMouseUp() {
     isDragging = false
+    isMoonDragging = false
   }
 
   onMount(() => {
     earthAngle = 0
+    moonAngle = 0
 
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
@@ -120,7 +143,7 @@
         xmlns="http://www.w3.org/2000/svg"
         onmousemove={handleMouseMove}
         role="img"
-        class:cursor-grabbing={isDragging}
+        class:cursor-grabbing={isDragging || isMoonDragging}
         in:versatile={{
           blur: {
             duration: 500,
@@ -168,6 +191,17 @@
           stroke="white"
         />
 
+        <!-- Moon orbit around Earth -->
+        <circle
+          cx={earthX}
+          cy={earthY}
+          r={moonOrbitRadius}
+          stroke="rgba(255, 255, 255, 0.4)"
+          stroke-width="2"
+          fill="none"
+          stroke-dasharray="8,4"
+        />
+
         <!-- Earth -->
         <circle
           cx={earthX}
@@ -177,6 +211,19 @@
           class="cursor-grab active:cursor-grabbing"
           class:cursor-grabbing={isDragging}
           onmousedown={handleMouseDown}
+          role="button"
+          tabindex="0"
+        />
+
+        <!-- Moon -->
+        <circle
+          cx={moonX}
+          cy={moonY}
+          r="20"
+          fill="#C0C0C0"
+          class="cursor-grab active:cursor-grabbing"
+          class:cursor-grabbing={isMoonDragging}
+          onmousedown={handleMoonMouseDown}
           role="button"
           tabindex="0"
         />
