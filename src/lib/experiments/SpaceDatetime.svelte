@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Calendar } from '@lucide/svelte'
+  import { Calendar, Check, Sun } from '@lucide/svelte'
   import { versatile } from '../transitions'
   import { fly } from 'svelte/transition'
+  import { backOut } from 'svelte/easing'
 
   let selectedDate = $state(new Date())
   let isOpen = $state(false)
@@ -27,7 +28,7 @@
 
 {#if labelWidth > 0}
   <div
-    class="flex justify-center rounded-xl"
+    class="flex justify-center overflow-hidden rounded-xl"
     class:mixed-transitions-open={isOpen}
     class:mixed-transitions-closed={!isOpen}
     class:h-10={!isOpen}
@@ -36,18 +37,41 @@
     class:bg-black={isOpen}
     class:cursor-pointer={!isOpen}
     style:width={!isOpen ? `${labelWidth}px` : '100%'}
-    onclick={() => (isOpen = !isOpen)}
+    onclick={() => {
+      if (!isOpen) isOpen = true
+    }}
     in:fly={{ duration: 300, y: 10 }}
     role="button"
     tabindex="0"
     onkeydown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        isOpen = !isOpen
+      if (e.key === 'Enter' || e.key === ' ' || !isOpen) {
+        isOpen = true
       }
     }}
   >
     {#if isOpen}
       <canvas bind:this={canvas} class="h-full w-full"></canvas>
+
+      <div
+        class="absolute bottom-3 mx-auto flex gap-2"
+        in:fly={{ duration: 300, y: 10, delay: 300, easing: backOut }}
+        out:fly={{ duration: 100, y: -50 }}
+      >
+        <button
+          class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/75 shadow-[inset_0.7px_0.7px_0.5px_0_white,inset_-0.7px_-0.7px_0.5px_0_white] duration-200 active:scale-95 active:opacity-80"
+        >
+          <Sun class="size-6 pt-0.5" />
+        </button>
+        <button
+          class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/75 shadow-[inset_0.7px_0.7px_0.5px_0_white,inset_-0.7px_-0.7px_0.5px_0_white] duration-200 active:scale-95 active:opacity-80"
+          onclick={(e) => {
+            e.stopPropagation()
+            isOpen = false
+          }}
+        >
+          <Check class="size-6 pt-0.5" />
+        </button>
+      </div>
     {:else}
       <div
         class="absolute inset-0 mx-auto flex items-center justify-center gap-2"
