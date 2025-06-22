@@ -26,7 +26,7 @@
 </script>
 
 {#if labelWidth > 0}
-  <button
+  <div
     class="flex justify-center rounded-xl"
     class:mixed-transitions-open={isOpen}
     class:mixed-transitions-closed={!isOpen}
@@ -38,6 +38,13 @@
     style:width={!isOpen ? `${labelWidth}px` : '100%'}
     onclick={() => (isOpen = !isOpen)}
     in:fly={{ duration: 300, y: 10 }}
+    role="button"
+    tabindex="0"
+    onkeydown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        isOpen = !isOpen
+      }
+    }}
   >
     {#if isOpen}
       <canvas bind:this={canvas} class="h-full w-full"></canvas>
@@ -84,7 +91,7 @@
         <span>{displayText}</span>
       </div>
     {/if}
-  </button>
+  </div>
 {/if}
 
 <!-- Invisible element used to measure the width of the date label -->
