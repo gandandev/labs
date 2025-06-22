@@ -29,30 +29,45 @@
   let moonY = $derived(earthY - moonOrbitRadius * Math.cos(moonAngle))
 
   let calculatedDate = $derived.by(() => {
-    // Normalize angle to 0-2π range
-    const normalizedAngle = ((earthAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
+    const normalizedEarthAngle = ((earthAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
 
     // Map angle to day of year (0° = January 1st, full rotation = full year)
-    const dayOfYear = Math.floor((normalizedAngle / (2 * Math.PI)) * 365.25)
+    const dayOfYear = Math.floor((normalizedEarthAngle / (2 * Math.PI)) * 365.25)
 
-    // Create date for current year starting from January 1st
     const currentYear = new Date().getFullYear()
-    const startOfYear = new Date(currentYear, 0, 1) // January 1st of current year
+    const startOfYear = new Date(currentYear, 0, 1)
 
     const newDate = new Date(startOfYear)
     newDate.setDate(startOfYear.getDate() + dayOfYear)
 
-    // Preserve the current time
-    const now = new Date()
-    newDate.setHours(now.getHours())
-    newDate.setMinutes(now.getMinutes())
-    newDate.setSeconds(now.getSeconds())
-
     return newDate
   })
 
+  let calculatedTime = $derived.by(() => {
+    const normalizedMoonAngle = ((moonAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
+
+    // Full moon orbit = 24 hours (1 day)
+    const totalSecondsInDay = 24 * 60 * 60
+    const secondsFromMoonPosition = Math.floor(
+      (normalizedMoonAngle / (2 * Math.PI)) * totalSecondsInDay
+    )
+
+    const hours = Math.floor(secondsFromMoonPosition / 3600)
+    const minutes = Math.floor((secondsFromMoonPosition % 3600) / 60)
+    const seconds = secondsFromMoonPosition % 60
+
+    return { hours, minutes, seconds }
+  })
+
+  // Merge calculated date and time
+  let mergedDateTime = $derived.by(() => {
+    const mergedDate = new Date(calculatedDate)
+    mergedDate.setHours(calculatedTime.hours, calculatedTime.minutes, calculatedTime.seconds, 0)
+    return mergedDate
+  })
+
   $effect(() => {
-    selectedDate = calculatedDate
+    selectedDate = mergedDateTime
   })
 
   let displayText = $derived(
