@@ -1,13 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Calendar, Check, Clock } from '@lucide/svelte'
+  import { Calendar, Check } from '@lucide/svelte'
   import { versatile } from '../transitions'
-  import { fly, scale } from 'svelte/transition'
+  import { fly } from 'svelte/transition'
   import { backOut, cubicOut } from 'svelte/easing'
 
   let selectedDate = $state(new Date())
   let isOpen = $state(false)
-  let view: 'sun' | 'moon' = $state('sun')
 
   let labelWidth = $state(0)
   let isEarthDragging = $state(false)
@@ -249,32 +248,6 @@
         in:fly={{ duration: 300, y: 10, delay: 300, easing: backOut }}
         out:fly={{ duration: 100, y: -50 }}
       >
-        <button
-          class="relative flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/75 shadow-[inset_0.7px_0.7px_0.5px_0_white,inset_-0.7px_-0.7px_0.5px_0_white] duration-200 active:scale-95 active:opacity-80"
-          onclick={(e) => {
-            e.stopPropagation()
-            view = view === 'sun' ? 'moon' : 'sun'
-          }}
-        >
-          {#if view == 'sun'}
-            <div
-              class="absolute"
-              in:scale={{ duration: 200, start: 0.5, delay: 10 }}
-              out:scale={{ duration: 200, start: 0.5 }}
-            >
-              <Calendar class="size-6" />
-            </div>
-          {:else}
-            <div
-              class="absolute"
-              in:scale={{ duration: 200, start: 0.5, delay: 10 }}
-              out:scale={{ duration: 200, start: 0.5 }}
-            >
-              <Clock class="size-6" />
-            </div>
-          {/if}
-        </button>
-
         <span
           class="flex h-10 w-42 items-center justify-center rounded-full bg-white/25 text-white shadow-[inset_0.7px_0.7px_0.5px_0_rgba(255,255,255,0.4),inset_-0.7px_-0.7px_0.5px_0_rgba(255,255,255,0.4)]"
         >
