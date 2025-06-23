@@ -246,7 +246,7 @@
       <div
         class="absolute bottom-3 mx-auto flex gap-2"
         in:fly={{ duration: 300, y: 10, delay: 300, easing: backOut }}
-        out:fly={{ duration: 100, y: -50 }}
+        out:fly={{ duration: 100, y: -50, delay: 75, easing: backOut }}
       >
         <span
           class="flex h-10 w-42 items-center justify-center rounded-full bg-white/25 text-white shadow-[inset_0.7px_0.7px_0.5px_0_rgba(255,255,255,0.4),inset_-0.7px_-0.7px_0.5px_0_rgba(255,255,255,0.4)]"
@@ -315,8 +315,8 @@
   .mixed-transitions-closed {
     --ease-back-out-small: cubic-bezier(0.4, 1.2, 0.5, 1);
     transition:
-      width 500ms 100ms var(--ease-back-out-small),
-      height 500ms 100ms var(--ease-back-out-small),
-      background-color 350ms 100ms ease;
+      width 500ms 75ms var(--ease-back-out-small),
+      height 500ms 75ms var(--ease-back-out-small),
+      background-color 400ms 75ms ease;
   }
 </style>
