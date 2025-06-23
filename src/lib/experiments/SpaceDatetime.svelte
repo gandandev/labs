@@ -30,14 +30,28 @@
   let calculatedDate = $derived.by(() => {
     const normalizedEarthAngle = ((earthAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
 
-    // Map angle to day of year (0° = January 1st, full rotation = full year)
-    const dayOfYear = Math.floor((normalizedEarthAngle / (2 * Math.PI)) * 365.25)
+    // 0° = March 21 (Vernal Equinox)
+    // 90° = June 21 (Summer Solstice)
+    // 180° = September 22 (Autuminal Equinox)
+    // 270° = December 21 (Winter Solstice)
 
     const currentYear = new Date().getFullYear()
-    const startOfYear = new Date(currentYear, 0, 1)
+    const isLeapYear = (currentYear % 4 === 0 && currentYear % 100 !== 0) || currentYear % 400 === 0
 
+    const vernalEquinoxDay = 31 + (isLeapYear ? 29 : 28) + 21
+
+    const daysFromVernalEquinox = (normalizedEarthAngle / (2 * Math.PI)) * 365.25
+
+    let dayOfYear = Math.floor(vernalEquinoxDay + daysFromVernalEquinox)
+
+    const daysInYear = isLeapYear ? 366 : 365
+    if (dayOfYear > daysInYear) {
+      dayOfYear -= daysInYear
+    }
+
+    const startOfYear = new Date(currentYear, 0, 1)
     const newDate = new Date(startOfYear)
-    newDate.setDate(startOfYear.getDate() + dayOfYear)
+    newDate.setDate(startOfYear.getDate() + dayOfYear - 1) // -1 because dayOfYear is 1-indexed
 
     return newDate
   })
@@ -45,7 +59,6 @@
   let calculatedTime = $derived.by(() => {
     const normalizedMoonAngle = ((moonAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
 
-    // Full moon orbit = 24 hours (1 day)
     const totalSecondsInDay = 24 * 60 * 60
     const secondsFromMoonPosition = Math.floor(
       (normalizedMoonAngle / (2 * Math.PI)) * totalSecondsInDay
